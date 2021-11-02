@@ -6,4 +6,5 @@ ChemBL API documentation is located [here](https://www.ebi.ac.uk/chembl/api/data
 
 The examples in this notebook (chembl_structural_alert_analysis.ipynb) shows how to retreive the data from ChemBL using API.
 
-!  
+Distribution of alert set
+![Alert set](https://github.com/nizamibilal/ChemBL_api_parsing/blob/main/images/alert_set_pie.png)
