@@ -15,6 +15,18 @@ git clone https://github.com/nizamibilal/ChemBL_api_parsing.git
 cd ChemBL_api_parsing
 ```
 
+start the notebook (chembl_structural_alert_analysis.ipynb) with jupyter-lab or jupyter notebook. 
+
+```bash
+jupyter-lab chembl_structural_alert_analysis.ipynb
+```
+
+***or*** 
+
+```bash
+jupyter-notebook chembl_structural_alert_analysis.ipynb
+```
+
 ## Example
 Distribution of alert set.
 
