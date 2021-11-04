@@ -31,3 +31,7 @@ jupyter-notebook chembl_structural_alert_analysis.ipynb
 Distribution of alert set.
 
 ![Alert set](images/alert_set_pie.png)
+
+## Contributing to the project
+
+Questions and issues can be posted to the [issue tracker](https://github.com/nizamibilal/ChemBL_api_parsing/issues).
