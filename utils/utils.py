@@ -17,7 +17,7 @@ def fetch_chembl_data(starting_url, compound_ids=None, method='GET', record_path
     Parameters
     -----------
     
-    starting_url:  (Str) Starting url to be used, e.g. /chembl/api/data/activity.json?limit=1000&offset=1&_=18635916
+    starting_url:  (Str) Starting url to be used, e.g. https://www.ebi.ac.uk/chembl/api/data/activity.json?limit=1000&offset=1&_=18635916
     
     compound_id: (pandas series) pass a list of molecule chembl IDs for which the records need to be retreived.
     Default None, all the records will be retreived. 
