@@ -7,7 +7,7 @@ import certifi
 import datetime
 from urllib3 import request
    
-def fetch_chembl_data(starting_url, compound_ids=None, method='GET', record_path=None):
+def fetch_chembl_data(starting_url, data_file, compound_ids=None, method='GET', record_path=None):
     """
     
     Method to retrieve ChemBL activity data from ChemBL Web Data Services for a given list of molecule_chembl_id. 
@@ -19,8 +19,10 @@ def fetch_chembl_data(starting_url, compound_ids=None, method='GET', record_path
     
     starting_url:  (Str) Starting url to be used, e.g. https://www.ebi.ac.uk/chembl/api/data/activity.json?limit=1000&offset=1&_=18635916
     
+    data_file: str, file/file path for retreived data to write into.
+
     compound_id: (pandas series) pass a list of molecule chembl IDs for which the records need to be retreived.
-    Default None, all the records will be retreived. 
+    Default None, all the records will be retreived.  
     
     method: str, GET (default) or POST.
         method for starting URL. 
@@ -67,6 +69,10 @@ def fetch_chembl_data(starting_url, compound_ids=None, method='GET', record_path
         else:
             print("{} rows selected out of {}".format(df_length_after, df_initial_length))
         
+    #write data to file
+    print("data will be written into: {}".format(data_file))
+    df.to_csv(data_file, sep=',', header=True)
+
     url_df = pd.json_normalize(data)
     base = 'https://www.ebi.ac.uk'
     next_url_exist = url_df['page_meta.next'][0]
@@ -111,5 +117,32 @@ def fetch_chembl_data(starting_url, compound_ids=None, method='GET', record_path
         print("Last fetch took : {} seconds".format(end_time-starting_time))
         # display df, for debug purpose
         #print(df['molecule_chembl_id'])
+
+        #append data to file
+        df.to_csv(data_file, sep=',', header=False, mode='a')
     
     return df
+
+
+##----------------------------------------
+##   Main 
+#-----------------------------------------
+def main():
+    #======================================================
+    #
+    #                   Configuration
+    #                   *************
+    #
+    #       Change these options as per your need
+    #======================================================
+
+    df = pd.read_csv('data/chembl_structural_alerts_pains.csv') # read file
+    starting_activity_url = 'https://www.ebi.ac.uk/chembl/api/data/activity.json?limit=1000&offset=1&_=18635916' # ChemBL webservice endpoint for activity
+    compound_ids = df['molecule_chembl_id'] # id column in df
+    data_file = 'data/test.csv' # file to write data
+
+    # call the funtion. 
+    fetch_chembl_data(starting_activity_url, data_file=data_file, compound_ids=compound_ids, method='GET', record_path='activities')
+
+if __name__ == '__main__':
+    main()
