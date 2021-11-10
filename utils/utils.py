@@ -6,8 +6,9 @@ import urllib3
 import certifi
 import datetime
 from urllib3 import request
+import os
    
-def fetch_chembl_data(starting_url, data_file, compound_ids=None, method='GET', record_path=None):
+def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name='data', method='GET', record_path=None):
     """
     
     Method to retrieve ChemBL activity data from ChemBL Web Data Services for a given list of molecule_chembl_id. 
@@ -19,10 +20,13 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, method='GET', 
     
     starting_url:  (Str) Starting url to be used, e.g. https://www.ebi.ac.uk/chembl/api/data/activity.json?limit=1000&offset=1&_=18635916
     
-    data_file: str, file/file path for retreived data to write into.
+    data_file: str, file name for retreived data to write into. It will be saved within a directory 
+    called 'data' inside the current working directory.
 
     compound_id: (pandas series) pass a list of molecule chembl IDs for which the records need to be retreived.
-    Default None, all the records will be retreived.  
+    Default None, all the records will be retreived. 
+
+    directory_name: str, name of directory for output files. Default 'data' 
     
     method: str, GET (default) or POST.
         method for starting URL. 
@@ -52,6 +56,20 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, method='GET', 
     data = json.loads(response.data.decode('utf-8'))
     df = pd.json_normalize(data, record_path=record_path)
     
+    # create data directory
+    try:
+        os.mkdir(directory_name)
+        print("'{}' directory created...".format(directory_name))
+    except FileExistsError:
+        print("'{}' directory already exist. Will use it to save output files.".format(directory_name))
+        pass
+    
+    #write data to file
+    data_file = directory_name +'/'+ data_file
+
+    if os.path.exists(data_file):
+        raise Exception("File '{}' already exist, can't overwrite. Please use another file.".format(data_file))
+    
     #--------------------------------------
     # if list of compound ids are provided, then select rows with those compound ids 
     #--------------------------------------
@@ -68,8 +86,8 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, method='GET', 
             print("None found!")
         else:
             print("{} rows selected out of {}".format(df_length_after, df_initial_length))
-        
-    #write data to file
+    
+
     print("data will be written into: {}".format(data_file))
     df.to_csv(data_file, sep=',', header=True)
 
@@ -139,10 +157,12 @@ def main():
     df = pd.read_csv('data/chembl_structural_alerts_pains.csv') # read file
     starting_activity_url = 'https://www.ebi.ac.uk/chembl/api/data/activity.json?limit=1000&offset=1&_=18635916' # ChemBL webservice endpoint for activity
     compound_ids = df['molecule_chembl_id'] # id column in df
-    data_file = 'data/test.csv' # file to write data
+    data_file = 'test.csv' # file to write data
+    directory_name = 'data'
 
     # call the funtion. 
-    fetch_chembl_data(starting_activity_url, data_file=data_file, compound_ids=compound_ids, method='GET', record_path='activities')
+    fetch_chembl_data(starting_activity_url, data_file=data_file, compound_ids=compound_ids,
+     directory_name = directory_name, method='GET', record_path='activities')
 
 if __name__ == '__main__':
     main()
