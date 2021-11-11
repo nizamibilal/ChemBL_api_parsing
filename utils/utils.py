@@ -61,14 +61,24 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name
         os.mkdir(directory_name)
         print("'{}' directory created...".format(directory_name))
     except FileExistsError:
-        print("'{}' directory already exist. Will use it to save output files.".format(directory_name))
+        print("'{}' directory already exist. Outputs will be saved in it.".format(directory_name))
         pass
     
     #write data to file
     data_file = directory_name +'/'+ data_file
 
     if os.path.exists(data_file):
-        raise Exception("File '{}' already exist, can't overwrite. Please use another file.".format(data_file))
+        user_input = input("WARNING! File '{}' already exist, Do you want to overwrite? Enter Y/N (y/n): ".format(data_file))
+        print("You entered: {}".format(user_input))
+        if user_input == 'Y' or user_input == 'y':
+            print("File '{}' will be overwritten!".format(data_file))
+            pass
+        if user_input == 'N' or user_input == 'n':
+            raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
+
+        else:
+            raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
+
     
     #--------------------------------------
     # if list of compound ids are provided, then select rows with those compound ids 
