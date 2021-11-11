@@ -6,7 +6,7 @@ import urllib3
 import certifi
 import datetime
 from urllib3 import request
-import os
+import os, sys
    
 def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name='data', method='GET', record_path=None):
     """
@@ -73,9 +73,6 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name
         if user_input == 'Y' or user_input == 'y':
             print("File '{}' will be overwritten!".format(data_file))
             pass
-        if user_input == 'N' or user_input == 'n':
-            raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
-
         else:
             raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
 
