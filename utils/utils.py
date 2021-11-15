@@ -43,11 +43,47 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name
     Examples
     --------
     >>> starting_activity_url = '/chembl/api/data/activity.json?limit=1000&offset=1&_=18635916'
-    >>> df_activity = fetch_chembl_data(starting_activity_url, method='GET', record_path='activities')
-    >>> df_activity
+    >>> df_activity = fetch_chembl_data(starting_activity_url, data_file='data/test.csv', method='GET', record_path='activities')
+    
     
     
     """
+    # create data directory
+    try:
+        os.mkdir(directory_name)
+        print("'{}' directory created...".format(directory_name))
+    except FileExistsError:
+        print("'{}' directory already exist. Outputs will be saved in it.".format(directory_name))
+        pass
+        
+    #write data to file
+    data_file = directory_name +'/'+ data_file
+    
+    retries = 2
+
+    if os.path.exists(data_file):
+        while True:   
+            # prompt
+            user_input = input("WARNING! File '{}' already exist, Do you want to overwrite? Enter Y/N (y/n): ".format(data_file))
+            print("You entered: {}".format(user_input))
+                
+    
+            if user_input in ('Y', 'y', 'yes', 'Yes'):
+                print("File '{}' will be overwritten!".format(data_file))
+                break
+
+            if retries == 0:
+                #print('retries', retries)
+                raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
+            
+            if user_input in ('N', 'n', 'no', 'No'):
+                raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
+
+            else:
+                retries = retries -1
+                #print('retries', retries)
+                continue
+
     starting_time = datetime.datetime.now()
     #print("Starting time:{} ".format(str(starting_time)))
     http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
@@ -56,26 +92,6 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name
     data = json.loads(response.data.decode('utf-8'))
     df = pd.json_normalize(data, record_path=record_path)
     
-    # create data directory
-    try:
-        os.mkdir(directory_name)
-        print("'{}' directory created...".format(directory_name))
-    except FileExistsError:
-        print("'{}' directory already exist. Outputs will be saved in it.".format(directory_name))
-        pass
-    
-    #write data to file
-    data_file = directory_name +'/'+ data_file
-
-    if os.path.exists(data_file):
-        user_input = input("WARNING! File '{}' already exist, Do you want to overwrite? Enter Y/N (y/n): ".format(data_file))
-        print("You entered: {}".format(user_input))
-        if user_input == 'Y' or user_input == 'y':
-            print("File '{}' will be overwritten!".format(data_file))
-            pass
-        else:
-            raise Exception("File '{}' already exist, you choose not to overwrite. Exiting...".format(data_file))
-
     
     #--------------------------------------
     # if list of compound ids are provided, then select rows with those compound ids 
