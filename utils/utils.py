@@ -164,6 +164,55 @@ def fetch_chembl_data(starting_url, data_file, compound_ids=None, directory_name
     
     return df
 
+def export_pct_lines(input_file, output_file, pct=0.01):
+    '''
+    Export a subset (defined percentage by user) of random lines from a csv input_file. Usefull in making a demo/sample data file from a large file.
+
+
+    Parameters:
+    ---------------------------------------------------
+    input_file: str, name/path of the csv input file.
+
+    output_file: str, name/path of the output csv file with random lines from the input_file.
+
+    pct= float, percentage of lines to keep in output file. default 0.01 (1 %)  
+    
+    
+
+    Return
+    -----------------------------
+    None. 
+
+    Example:
+    -------------------------------
+
+    '''
+    pct = pct # fraction of rows to be kept. Between 0 and 1
+
+    # check if outfile exist. 
+    if os.path.exists(input_file):
+        raise FileExistsError:
+
+    # read the dataset and get it's shape
+    try:
+        df = pd.read_csv(input_file)
+        df_size = df.shape
+    except FileNotFoundError as e:
+        print (e)
+
+
+    # start a array of random number between 0 and total rows in the dataframe
+    index = np.random.randint(0, high=int(df_size[0]*pct), size=int(df_size[0]*pct))
+    index
+
+    # select rows using index
+    df_random_subset = df.iloc[index]
+
+    # write to csv file
+    df_random_subset.to_csv(output_file, sep=',', header=1)
+
+    return None
+
 
 ##----------------------------------------
 ##   Main 
